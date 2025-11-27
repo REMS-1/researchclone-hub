@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirinyaga Research & Innovation Hub</title>
+    <!-- Load Tailwind CSS for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles & Color Theme */
+        :root {
+            --color-cream: #FAF3E0; /* Main Background */
+            --color-green: #79AC78; /* Primary Accent */
+            --color-yellow: #F3C85F; /* Secondary Accent/Buttons */
+            --color-dark: #373A3C;
+        }
+
+        body {
+            background-color: var(--color-cream);
+            font-family: 'Inter', sans-serif;
+            color: var(--color-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: var(--color-green);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn {
+            padding: 0.75rem 1.25rem;
+            color: var(--color-cream);
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background-color: var(--color-yellow);
+            color: var(--color-dark);
+        }
+
+        .primary-btn {
+            background-color: var(--color-yellow);
+            color: var(--color-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            border: 2px solid var(--color-yellow);
+        }
+
+        .primary-btn:hover {
+            background-color: #f7d277;
+        }
+
+        .card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid var(--color-green);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            background-color: #f8f8f8;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--color-yellow);
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            margin-right: 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        /* Category specific colors */
+        .tag-environment { background-color: #E6F3E6; color: #4CAF50; }
+        .tag-medical { background-color: #F0E6F3; color: #9C27B0; }
+        .tag-economic { background-color: #FFFBE6; color: #FF9800; }
+        .tag-education { background-color: #E6F3F3; color: #2196F3; }
+        .tag-social { background-color: #F3E6E6; color: #E91E63; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="header p-4 sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-white">Kirinyaga Research Hub</h1>
+            <nav class="flex space-x-2 md:space-x-4">
+                <div class="nav-btn active" data-view="home">Home</div>
+                <div class="nav-btn" data-view="problems">Problems</div>
+                <div class="nav-btn" data-view="post">Post Problem</div>
+                <div class="nav-btn" data-view="researchers">Researchers</div>
+                <div class="nav-btn" data-view="funding">Funding Hub</div>
+                <div class="nav-btn" data-view="students">Student Corner</div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto p-4 flex-grow">
+        
+        <!-- View Containers -->
+        <div id="home-view" class="view"></div>
+        <div id="problems-view" class="view hidden"></div>
+        <div id="post-view" class="view hidden"></div>
+        <div id="researchers-view" class="view hidden"></div>
+        <div id="funding-view" class="view hidden"></div>
+        <div id="students-view" class="view hidden"></div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-200 p-4 text-center text-sm text-gray-600 mt-8">
+        &copy; 2025 Kirinyaga Research & Innovation Hub. Driving Local Solutions.
+    </footer>
+
+    <script>
+        // --- Internal JavaScript for SPA Logic and Data Management ---
+
+        const views = document.querySelectorAll('.view');
+        const navButtons = document.querySelectorAll('.nav-btn');
+        let problemsData = [];
+        let researcherProfiles = [];
+
+        // Utility to generate a unique ID
+        const generateId = () => Math.random().toString(36).substring(2, 9);
+
+        // Mock Data Initialization
+        const initializeMockData = () => {
+            problemsData = [
+                { id: generateId(), title: "Severe Water Contamination in Gichugu", description: "A major issue with boreholes being contaminated by agricultural run-off, causing high rates of waterborne illness.", category: "Environment", status: "Seeking Proposals", posted: "2025-09-01", researcherId: null },
+                { id: generateId(), title: "Lack of Diagnostic Tools for Non-Communicable Diseases", description: "Rural health facilities lack basic equipment to screen for hypertension and diabetes.", category: "Medical", status: "In Progress", posted: "2025-08-15", researcherId: "R001" },
+                { id: generateId(), title: "Low Yield Coffee Beans Due to Disease", description: "A new fungal blight is severely impacting the coffee yield for smallholder farmers in the highlands.", category: "Agriculture", status: "Seeking Proposals", posted: "2025-10-10", researcherId: null },
+                { id: generateId(), title: "Digital Literacy Gap in Elderly Population", description: "Difficulty in accessing government e-services due to a lack of basic digital skills among the older generation.", category: "Social", status: "Proposal Submitted", posted: "2025-11-05", researcherId: "R002" },
+            ];
+
+            researcherProfiles = [
+                { id: "R001", name: "Dr. Leda Karanja", expertise: "Public Health & Epidemiology", affiliation: "University of Nairobi", status: "Active" },
+                { id: "R002", name: "Eng. Fenrir Oburu", expertise: "Software Development & Data Science", affiliation: "Local Tech Startup", status: "Active" },
+                { id: "R003", name: "Prof. Kore Wanjiru", expertise: "Environmental Chemistry", affiliation: "International Research Institute", status: "Onboarding" },
+            ];
+            
+            // Log data for easy inspection
+            console.log("Mock data loaded:", { problems: problemsData, researchers: researcherProfiles });
+        };
+
+        // --- SPA Routing and Rendering Functions ---
+
+        const navigateTo = (viewId) => {
+            views.forEach(view => {
+                view.classList.add('hidden');
+            });
+            document.getElementById(`${viewId}-view`).classList.remove('hidden');
+
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-view') === viewId) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Call specific renderer for the view
+            if (viewId === 'home') renderHome();
+            if (viewId === 'problems') renderProblems();
+            if (viewId === 'post') renderPostProblem();
+            if (viewId === 'researchers') renderResearchers();
+            if (viewId === 'funding') renderFundingHub();
+            if (viewId === 'students') renderStudentCorner();
+        };
+
+        // Helper to get category tag class
+        const getCategoryClass = (category) => {
+            const map = {
+                'Environment': 'tag-environment',
+                'Medical': 'tag-medical',
+                'Agriculture': 'tag-economic', // Using economic color for agriculture
+                'Education': 'tag-education',
+                'Social': 'tag-social',
+                'Infrastructure': 'tag-dark'
+            };
+            return map[category] || 'bg-gray-200 text-gray-700';
+        };
+
+        // 1. Home View
+        const renderHome = () => {
+            const totalProblems = problemsData.length;
+            const solvedProblems = problemsData.filter(p => p.status === 'Solved').length;
+            const activeResearchers = researcherProfiles.filter(r => r.status === 'Active').length;
+
+            document.getElementById('home-view').innerHTML = `
+                <div class="text-center py-10 bg-white rounded-xl shadow-lg mb-8">
+                    <h2 class="text-4xl font-extrabold text-gray-800">Bridging Kirinyaga Problems with Global Research</h2>
+                    <p class="mt-3 text-lg text-gray-600">Post local challenges, find expert solutions, and secure funding for impact.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="card p-6 text-center bg-green-50">
+                        <div class="text-4xl font-bold text-green-700">${totalProblems}</div>
+                        <p class="text-gray-600 mt-2">Problems Identified</p>
+                    </div>
+                    <div class="card p-6 text-center bg-yellow-50">
+                        <div class="text-4xl font-bold text-yellow-700">${activeResearchers}</div>
+                        <p class="text-gray-600 mt-2">Active Researchers</p>
+                    </div>
+                    <div class="card p-6 text-center bg-red-50">
+                        <div class="text-4xl font-bold text-red-700">${solvedProblems}</div>
+                        <p class="text-gray-600 mt-2">Problems Solved</p>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h3 class="text-2xl font-semibold mb-4 border-b pb-2">How It Works</h3>
+                    <div class="space-y-4">
+                        <p><span class="font-bold text-lg text-green-700">1. Post:</span> Community members submit verifiable problems in Kirinyaga.</p>
+                        <p><span class="font-bold text-lg text-green-700">2. Match:</span> Researchers with relevant expertise view and 'Adopt' a problem.</p>
+                        <p><span class="font-bold text-lg text-green-700">3. Fund:</span> Proposals are prepared and linked to funding opportunities.</p>
+                        <p><span class="font-bold text-lg text-green-700">4. Solve:</span> Research is executed, and the solution is implemented locally.</p>
+                    </div>
+                </div>
+            `;
+        };
+
+        // 2. Problems View
+        const renderProblems = (filter = 'All') => {
+            let filteredProblems = problemsData;
+            if (filter !== 'All') {
+                filteredProblems = problemsData.filter(p => p.category === filter);
+            }
+            
+            const categories = ['All', 'Environment', 'Medical', 'Agriculture', 'Education', 'Social', 'Infrastructure'];
+
+            const problemListHTML = filteredProblems.length > 0
+                ? filteredProblems.map(p => {
+                    const researcher = researcherProfiles.find(r => r.id === p.researcherId);
+                    const statusColor = p.status === 'Seeking Proposals' ? 'bg-red-500' : p.status === 'In Progress' ? 'bg-yellow-500' : 'bg-green-500';
+
+                    return `
+                        <div class="card mb-4 hover:shadow-xl transition duration-300">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="text-xl font-bold text-green-700">${p.title}</h4>
+                                    <span class="category-tag ${getCategoryClass(p.category)}">${p.category}</span>
+                                    <span class="text-sm font-medium text-gray-500 ml-2">Posted: ${p.posted}</span>
+                                </div>
+                                <span class="text-sm text-white font-semibold px-3 py-1 rounded-full ${statusColor}">${p.status}</span>
+                            </div>
+                            <p class="mt-2 text-gray-700">${p.description.substring(0, 150)}...</p>
+                            <div class="mt-3 flex justify-between items-center">
+                                <p class="text-sm text-gray-600">
+                                    Researcher: ${researcher ? `<span class="font-semibold text-green-600">${researcher.name}</span>` : 'None Assigned'}
+                                </p>
+                                <button class="primary-btn text-sm">View Details / Propose</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('')
+                : '<p class="text-center text-lg text-gray-500 py-10">No problems found for this category.</p>';
+
+            document.getElementById('problems-view').innerHTML = `
+                <h2 class="text-3xl font-bold mb-4">Community Problems in Kirinyaga</h2>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    ${categories.map(cat => `
+                        <button onclick="navigateTo('problems', '${cat}')" 
+                                class="px-4 py-2 rounded-full text-sm font-semibold transition ${filter === cat ? 'bg-green-700 text-white' : 'bg-gray-200 hover:bg-gray-300'}">
+                            ${cat}
+                        </button>
+                    `).join('')}
+                </div>
+
+                <div>${problemListHTML}</div>
+            `;
+        };
+
+        // 3. Post Problem View
+        const renderPostProblem = () => {
+            document.getElementById('post-view').innerHTML = `
+                <h2 class="text-3xl font-bold mb-6">Submit a Community Problem</h2>
+                <div class="card max-w-2xl mx-auto">
+                    <form id="problem-form" class="space-y-4">
+                        <div>
+                            <label for="p-title" class="block font-medium mb-1">Problem Title</label>
+                            <input type="text" id="p-title" class="input-field" required>
+                        </div>
+                        <div>
+                            <label for="p-description" class="block font-medium mb-1">Detailed Description</label>
+                            <textarea id="p-description" rows="5" class="input-field" required></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="p-category" class="block font-medium mb-1">Category</label>
+                                <select id="p-category" class="input-field" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Environment">Environment</option>
+                                    <option value="Medical">Medical/Health</option>
+                                    <option value="Agriculture">Agriculture</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Social">Social</option>
+                                    <option value="Infrastructure">Infrastructure</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="p-location" class="block font-medium mb-1">Location (Must be in Kirinyaga)</label>
+                                <input type="text" id="p-location" value="Kirinyaga County, Kenya" class="input-field" readonly>
+                            </div>
+                        </div>
+                        <div id="form-message" class="text-center font-semibold hidden"></div>
+                        <button type="submit" class="primary-btn w-full py-3">Submit Problem</button>
+                    </form>
+                </div>
+            `;
+            
+            document.getElementById('problem-form').addEventListener('submit', handleProblemSubmission);
+        };
+
+        const handleProblemSubmission = (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const messageEl = document.getElementById('form-message');
+
+            const newProblem = {
+                id: generateId(),
+                title: form['p-title'].value,
+                description: form['p-description'].value,
+                category: form['p-category'].value,
+                location: form['p-location'].value,
+                status: "Seeking Proposals",
+                posted: new Date().toISOString().slice(0, 10),
+                researcherId: null,
+            };
+
+            problemsData.unshift(newProblem); // Add to the front
+            form.reset();
+            
+            messageEl.textContent = "Problem submitted successfully! Thank you for your input.";
+            messageEl.classList.remove('hidden', 'text-red-500');
+            messageEl.classList.add('text-green-600');
+            
+            // Auto-hide message after 3 seconds
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, 3000);
+
+            console.log("New problem added:", newProblem);
+        };
+
+        // 4. Researchers View (Onboarding & Connection)
+        const renderResearchers = () => {
+            const researcherListHTML = researcherProfiles.map(r => `
+                <div class="card p-4 flex justify-between items-center mb-3">
+                    <div>
+                        <h4 class="text-lg font-bold text-green-700">${r.name}</h4>
+                        <p class="text-sm font-medium text-gray-700">${r.expertise}</p>
+                        <p class="text-xs text-gray-500">${r.affiliation}</p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-semibold px-3 py-1 rounded-full ${r.status === 'Active' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}">${r.status}</span>
+                        <button class="primary-btn ml-3 text-sm">Connect</button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('researchers-view').innerHTML = `
+                <h2 class="text-3xl font-bold mb-6">Our Network of Researchers</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3 class="text-xl font-semibold mb-3 border-b pb-2">Researcher Onboarding</h3>
+                        <p class="mb-4 text-gray-600">Are you an expert interested in solving local challenges? Register and share your expertise!</p>
+                        <form class="space-y-3">
+                            <input type="text" placeholder="Full Name" class="input-field" required>
+                            <input type="email" placeholder="Email Address" class="input-field" required>
+                            <input type="text" placeholder="Area of Expertise (e.g., Epidemiology)" class="input-field" required>
+                            <input type="text" placeholder="Affiliation (University/Company)" class="input-field" required>
+                            <button type="submit" class="primary-btn w-full">Join the Network</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold mb-3 border-b pb-2">Active Researchers (${researcherProfiles.length})</h3>
+                        <div class="space-y-3">${researcherListHTML}</div>
+                        <p class="mt-4 text-sm text-gray-500">Use the 'Connect' button to initiate a chat or send an inquiry (mock feature).</p>
+                    </div>
+                </div>
+            `;
+        };
+        
+        // 5. Funding Hub View
+        const renderFundingHub = () => {
+            const fundingSources = [
+                { name: "ResearchBeeline", desc: "A comprehensive database for global research grants and funding opportunities.", link: "https://example.com/researchbeeline" },
+                { name: "Kenya NACOSTI Grants", desc: "National Commission for Science, Technology and Innovation grants for local researchers.", link: "https://example.com/nacosti" },
+                { name: "Wellcome Trust (East Africa)", desc: "Funding opportunities focused on health and biomedical science in the region.", link: "https://example.com/wellcometrust" },
+                { name: "Corporate Social Responsibility (CSR) Registry", desc: "List of Kenyan companies with active CSR programs interested in community solutions.", link: "https://example.com/csr-registry" },
+            ];
+
+            const fundingListHTML = fundingSources.map(f => `
+                <div class="card mb-4">
+                    <h4 class="text-xl font-bold text-green-700">${f.name}</h4>
+                    <p class="text-gray-700 mt-1">${f.desc}</p>
+                    <a href="${f.link}" target="_blank" class="text-blue-500 hover:text-blue-700 font-semibold mt-2 inline-block">Visit Site &rarr;</a>
+                </div>
+            `).join('');
+
+            document.getElementById('funding-view').innerHTML = `
+                <h2 class="text-3xl font-bold mb-6">Funding & Grant Opportunities</h2>
+                <p class="text-lg mb-6 text-gray-700">Connecting successful proposals to the resources needed for implementation. This hub features external sites for grants and partnerships.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    ${fundingListHTML}
+                </div>
+                <div class="card mt-6 bg-yellow-50 border-l-8 border-yellow-500">
+                    <h3 class="text-xl font-semibold mb-2">Proposal Submission Reminder</h3>
+                    <p class="text-gray-700">Remember to first submit a detailed proposal on a specific problem before applying for funding. A high-quality, adopted proposal increases your chances of securing external grants.</p>
+                </div>
+            `;
+        };
+
+        // 6. Student Corner View
+        const renderStudentCorner = () => {
+            const jobs = [
+                { title: "Data Analyst Intern (Environmental Project)", desc: "Assisting researchers in cleaning and visualizing water quality data.", req: "Basic statistics, Python/R knowledge." },
+                { title: "Field Research Assistant (Agricultural Study)", desc: "On-site data collection and community engagement with local farmers.", req: "Knowledge of Kirinyaga geography, strong communication skills." },
+            ];
+
+            const jobListHTML = jobs.map(j => `
+                <div class="card mb-4 bg-white hover:shadow-lg transition">
+                    <h4 class="text-xl font-bold text-green-700">${j.title}</h4>
+                    <p class="text-gray-700 mt-1">${j.desc}</p>
+                    <p class="text-sm text-gray-500 mt-2">Required: ${j.req}</p>
+                    <button class="primary-btn mt-3 text-sm">Apply Now</button>
+                </div>
+            `).join('');
+
+            document.getElementById('students-view').innerHTML = `
+                <h2 class="text-3xl font-bold mb-6">Student Corner: Learn, Contribute, Grow</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Section 1: Job Opportunities -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 border-b pb-2 text-green-700">Job & Internship Opportunities</h3>
+                        <p class="mb-4 text-gray-700">Gain experience by contributing directly to live research projects. Roles like Data Analyst are often available.</p>
+                        ${jobListHTML}
+                    </div>
+
+                    <!-- Section 2: Give a Say -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 border-b pb-2 text-green-700">Give A Say: Feedback & Ideas</h3>
+                        <div class="card bg-yellow-50">
+                            <form class="space-y-3">
+                                <label for="student-feedback" class="block font-medium mb-1">Your Opinion on Local Problems</label>
+                                <textarea id="student-feedback" rows="4" class="input-field" placeholder="Share your insight on the water contamination or another issue..."></textarea>
+                                <button type="submit" class="primary-btn w-full">Submit Insight</button>
+                            </form>
+                            <p class="mt-3 text-sm text-gray-600">Your feedback is routed to the researchers adopting the relevant problem.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+        
+        // --- Initialization and Event Setup ---
+        window.onload = () => {
+            initializeMockData();
+            
+            // Set up navigation listeners
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    navigateTo(btn.getAttribute('data-view'));
+                });
+            });
+
+            // Handle initial view load
+            navigateTo('home');
+        };
+
+        // Redefine navigateTo to handle the filter parameter for the problems view
+        // This is necessary because the initial definition above is used in the onload.
+        const originalNavigateTo = navigateTo;
+        navigateTo = (viewId, filter = 'All') => {
+            originalNavigateTo(viewId); // Call the original SPA router
+
+            // Specific logic for the problems view
+            if (viewId === 'problems') {
+                renderProblems(filter);
+            }
+        };
+
+    </script>
+</body>
+</html>
